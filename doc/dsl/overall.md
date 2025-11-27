@@ -1,7 +1,7 @@
 # CORINT Risk Definition Language (RDL)
 ## Overall Specification (v0.1)
 
-**RDL is the domain-specific language used by CORINT (Cognitive Risk Intelligence Network Technology) to define rules, rule groups, reasoning logic, and full risk‑processing pipelines.**  
+**RDL is the domain-specific language used by CORINT (Cognitive Risk Intelligence) to define rules, rule groups, reasoning logic, and full risk‑processing pipelines.**  
 It enables modern hybrid risk engines to combine deterministic logic with LLM‑based reasoning in a unified, explainable, high‑performance format.
 
 ---
@@ -56,7 +56,7 @@ rule:
   description: string
   when: <condition-block>
   score: number
-  action: approve | deny | review | escalate | <custom>
+  action: approve | deny | review | infer | <custom>
 ```
 
 ---
@@ -107,13 +107,38 @@ Operators:
 
 ---
 
-### 3.1.4 Actions
+### 3.1.4 Decision Making
 
-- approve  
-- deny  
-- review  
-- escalate  
-- custom object-based actions  
+**Actions are not defined in Rules.**  
+Rules only detect risk factors and provide scores.
+
+Actions are defined in Ruleset's `decision_logic`:
+
+```yaml
+ruleset:
+  id: fraud_detection
+  rules:
+    - rule_1  # Just scores
+    - rule_2  # Just scores
+    
+  decision_logic:
+    - condition: total_score >= 100
+      action: deny  # Actions defined here
+      
+    - condition: total_score >= 50
+      action: infer
+      infer:
+        data_snapshot: [event.*, context.*]
+        
+    - default: true
+      action: approve
+```
+
+**Built-in Actions:**
+- `approve` - Automatically approve  
+- `deny` - Automatically reject
+- `review` - Send to human review
+- `infer` - Send to AI analysis (async)  
 
 ---
 
@@ -122,13 +147,19 @@ Operators:
 ```yaml
 ruleset:
   id: string
+  name: string
   rules:
     - rule_id_1
     - rule_id_2
     - rule_id_3
+  decision_logic:
+    - condition: <expression>
+      action: <action-type>
+    - default: true
+      action: <action-type>
 ```
 
-Rulesets allow grouping and reuse.
+Rulesets group rules and define decision logic based on rule combinations.
 
 ---
 
@@ -152,40 +183,131 @@ It supports:
 
 ## 4. Expression Language
 
-### 4.1 Field Access
+RDL provides a powerful expression language for defining conditions and computations.
 
-```
-user.profile.age
-trade.amount
-device.id
-geo.ip
-```
+Key features:
+- Logical operators (AND, OR, NOT)
+- Comparison and membership operators
+- String operations and regex
+- Time-based aggregations
+- Built-in functions
+- LLM and external API integration
 
-### 4.2 Operators
-
-| Operator | Description |
-|----------|-------------|
-| `==` | equality |
-| `!=` | not equal |
-| `<, >, <=, >=` | numeric compare |
-| `in` | list/array membership |
-| `exists`, `missing` | presence check |
-| `regex` | regex match |
+(See `expression.md` for complete specification.)
 
 ---
 
-### 4.3 LLM Expressions
+## 5. Data Types and Schema
 
-```yaml
-LLM.reason(obj) contains "anomaly"
-LLM.tags contains "ip_mismatch"
-LLM.score > 0.8
-LLM.output.behavior_stability < 0.4
-```
+RDL includes a comprehensive type system for data validation and safety.
+
+Features:
+- Primitive types (string, number, boolean, datetime)
+- Composite types (arrays, objects, maps)
+- Custom type definitions
+- Schema validation
+- Format validators
+
+(See `schema.md` for full specification.)
 
 ---
 
-## 5. External API Integration
+## 6. Context and Variable Management
+
+Context management enables data flow between pipeline steps.
+
+Context layers:
+- **event** - Input event data (read-only)
+- **vars** - Pipeline variables (read-only)
+- **context** - Step outputs (read-write)
+- **sys** - System variables (read-only)
+- **env** - Environment configuration (read-only)
+
+(See `context.md` for complete details.)
+
+---
+
+## 7. LLM Integration
+
+RDL enables seamless integration with Large Language Models for cognitive reasoning.
+
+Capabilities:
+- Multiple LLM providers (OpenAI, Anthropic, custom)
+- Prompt engineering and templating
+- Structured output schemas
+- Response caching and optimization
+- Error handling and fallbacks
+- Cost tracking
+
+(See `llm.md` for comprehensive guide.)
+
+---
+
+## 8. Error Handling
+
+Production-grade error handling ensures reliability and graceful degradation.
+
+Strategies:
+- **fail** - Stop execution on critical errors
+- **skip** - Continue without failed step
+- **fallback** - Use default values
+- **retry** - Retry with exponential backoff
+- **circuit breaker** - Protect external services
+
+(See `error-handling.md` for full specification.)
+
+---
+
+## 9. Observability
+
+Comprehensive observability for monitoring and debugging.
+
+Features:
+- Structured logging with sampling
+- Metrics (counters, gauges, histograms)
+- Distributed tracing
+- Audit trails
+- Alerting
+- Performance profiling
+- Explainability
+
+(See `observability.md` for complete guide.)
+
+---
+
+## 10. Testing
+
+Robust testing framework for validation and quality assurance.
+
+Test types:
+- Unit tests (individual rules)
+- Integration tests (rulesets)
+- Pipeline tests (end-to-end)
+- Regression tests (historical cases)
+- Performance tests (load and stress)
+
+(See `test.md` for testing specification.)
+
+---
+
+## 11. Performance Optimization
+
+High-performance execution for real-time decisioning.
+
+Optimizations:
+- Multi-level caching
+- Parallelization
+- Lazy loading
+- Early termination
+- Connection pooling
+- LLM optimization
+- Resource management
+
+(See `performance.md` for optimization strategies.)
+
+---
+
+## 12. External API Integration
 
 ```yaml
 external_api.<provider>.<field>
@@ -199,9 +321,36 @@ external_api.Chainalysis.risk_score > 80
 
 ---
 
-## 6. Examples
+## 13. Documentation Structure
 
-### 6.1 Login Risk Example
+RDL documentation is organized as follows:
+
+### Core Components
+- **overall.md** (this file) - High-level overview
+- **rule.md** - Rule specification
+- **ruleset.md** - Ruleset specification
+- **pipeline.md** - Pipeline specification
+
+### Advanced Features
+- **expression.md** - Expression language reference
+- **schema.md** - Type system and data schemas
+- **context.md** - Context and variable management
+- **llm.md** - LLM integration guide
+
+### Operational
+- **error-handling.md** - Error handling strategies
+- **observability.md** - Monitoring and logging
+- **test.md** - Testing framework
+- **performance.md** - Performance optimization
+
+### Examples
+- **examples/** - Real-world pipeline examples
+
+---
+
+## 14. Examples
+
+### 14.1 Login Risk Example
 
 ```yaml
 version: "0.1"
@@ -221,12 +370,11 @@ rule:
       - LLM.score > 0.7
 
   score: +80
-  action: review
 ```
 
 ---
 
-### 6.2 Loan Application Consistency
+### 14.2 Loan Application Consistency
 
 ```yaml
 version: "0.1"
@@ -244,12 +392,11 @@ rule:
       - LLM.output.employment_stability < 0.3
 
   score: +120
-  action: deny
 ```
 
 ---
 
-## 7. BNF Grammar (Formal)
+## 15. BNF Grammar (Formal)
 
 ```
 RDL ::= "version" ":" STRING
@@ -263,7 +410,6 @@ RULE_BODY ::=
       "description:" STRING
       "when:" CONDITION_BLOCK
       "score:" NUMBER
-      "action:" ACTION
 
 CONDITION_BLOCK ::=
       EVENT_FILTER
@@ -296,40 +442,103 @@ MATCH_OP ::= "contains" | "not_contains"
 EXTERNAL_EXPR ::=
       "external_api." IDENT "." FIELD OP VALUE
 
-ACTION ::= "approve" | "deny" | "review" | "escalate" | OBJECT
+ACTION ::= "approve" | "deny" | "review" | "infer" | OBJECT
 
 RULESET ::= "ruleset:" 
               "id:" STRING
+              [ "name:" STRING ]
+              [ "description:" STRING ]
               "rules:" RULE_ID_LIST
+              [ "decision_logic:" DECISION_LIST ]
+
+DECISION_LIST ::= "-" DECISION { "-" DECISION }
+
+DECISION ::= 
+      "condition:" EXPRESSION
+      "action:" ACTION
+      [ "reason:" STRING ]
+      [ "terminate:" BOOLEAN ]
+    | "default:" BOOLEAN
+      "action:" ACTION
 
 PIPELINE ::= defined in pipeline.md
 ```
 
 ---
 
-## 8. Compilation Model
+## 16. Decision Architecture
+
+RDL uses a three-layer decision architecture:
+
+### Layer 1: Rules (Detectors)
+- Detect individual risk factors
+- Produce scores
+- **No actions defined**
+
+### Layer 2: Rulesets (Decision Makers)
+- Combine rule results
+- Evaluate patterns and thresholds
+- **Define actions through decision_logic**
+- Produce final decisions
+
+### Layer 3: Pipelines (Orchestrators)
+- Orchestrate execution flow
+- Manage data flow between steps
+- **No decision logic** - uses ruleset decisions
+
+**Decision Flow:**
+```
+Rules → Scores → Ruleset → Action → Pipeline Output
+```
+
+## 17. Compilation Model
 
 RDL compiles into:
 
-1. AST  
-2. Rust IR  
-3. Explainability trace  
-4. Deterministic + LLM hybrid execution plan  
+1. **AST (Abstract Syntax Tree)** - Intermediate representation
+2. **Rust IR** - High-performance execution format
+3. **Type-checked IR** - With schema validation
+4. **Explainability trace** - For decision transparency
+5. **Deterministic + LLM hybrid execution plan** - Optimized execution
+
+The compilation process includes:
+- Syntax validation
+- Type checking
+- Dependency resolution
+- Optimization passes
+- Error detection
 
 ---
 
-## 9. Roadmap
+## 17. Roadmap
 
-- Type system  
-- Static analysis  
-- Visual editor  
-- WASM sandbox execution  
-- Code generator (Rust / Python / JS)  
-- Prebuilt rule libraries  
+### Completed ✅
+- ✅ Core DSL syntax (Rule, Ruleset, Pipeline)
+- ✅ Expression language
+- ✅ LLM integration
+- ✅ Type system
+- ✅ Error handling framework
+- ✅ Observability infrastructure
+- ✅ Testing framework
+- ✅ Performance optimization
+
+### In Progress 🚧
+- 🚧 Static analysis
+- 🚧 Visual editor
+- 🚧 IDE plugins
+
+### Planned 📋
+- 📋 WASM sandbox execution
+- 📋 Code generator (Rust / Python / JS / TypeScript)
+- 📋 Prebuilt rule libraries
+- 📋 Machine learning model integration
+- 📋 Real-time rule updates
+- 📋 A/B testing framework
+- 📋 Compliance templates (PCI-DSS, GDPR, etc.)
 
 ---
 
-## 10. Summary
+## 18. Summary
 
 RDL provides a modern, explainable, AI‑augmented DSL for advanced risk engines:
 

@@ -15,7 +15,6 @@ rule:
   description: string
   when: <condition-block>
   score: number
-  action: approve | deny | review | escalate | <custom>
 ```
 
 ---
@@ -159,27 +158,33 @@ score: +80
 ```
 
 Scores are typically added together across multiple rules and later aggregated in a pipeline step.
+### 8.1 Negative Scores
+
+The `score` field supports both positive and **negative numbers**.  
+Negative scores are typically used to lower the total risk score, grant trust credits, or offset other rules that increase risk.
+
+For example:
+
+```yaml
+score: -40
+```
+
+When this rule is triggered, **40 points will be subtracted** from the total risk score.  
+Negative scores are useful for modeling low-risk behavior, whitelist conditions, or strong authentication that should reduce the assessed risk.
+
+**Note:** The aggregate risk score may become negative depending on your scoring logic; it is recommended to validate or normalize the total score as appropriate for your use case.
+
 
 ---
 
-## 9. `action`
+## 9. Decision Making
 
-The action to take when a rule triggers.
+**Rules do not define actions.**
 
-Supported built-in actions:
+Actions are defined at the Ruleset level through `decision_logic`.  
+Rules only detect risk factors and contribute scores.
 
-- `approve`
-- `deny`
-- `review`
-- `escalate`
-
-Custom object-based actions may also be defined:
-
-```yaml
-action:
-  type: escalate
-  to: human_agent
-```
+See `ruleset.md` for decision-making configuration.
 
 ---
 
@@ -205,7 +210,6 @@ rule:
       - LLM.score > 0.7
 
   score: +80
-  action: review
 ```
 
 ---
@@ -228,7 +232,6 @@ rule:
       - LLM.output.employment_stability < 0.3
 
   score: +120
-  action: deny
 ```
 
 ---
@@ -237,9 +240,10 @@ rule:
 
 A CORINT Rule:
 
-- Defines an atomic risk decision  
+- Defines an atomic risk detection  
 - Combines structured logic + LLM reasoning  
-- Produces a score and an action  
+- Produces a score when triggered
+- **Does not define action** (actions defined in Ruleset)
 - Forms the basis of reusable Rulesets  
 - Integrates seamlessly into Pipelines  
 
