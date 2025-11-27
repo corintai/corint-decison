@@ -295,6 +295,37 @@ Custom windows:
 - avg(scores, "6M") > 0.8         # last 6 months
 ```
 
+### 9.3 Advanced Statistical Analysis
+
+For more complex statistical analysis and feature engineering (such as distinct count, association analysis, percentiles, etc.), see the dedicated **Feature Engineering** specification:
+
+📖 **See [feature.md](feature.md)** for:
+- **Distinct count** - `count_distinct()` for unique value counting
+- **Association analysis** - IP/Device/User relationship metrics
+- **Percentile calculations** - Outlier detection with percentiles
+- **Velocity features** - Rate of change and pattern detection
+- **Statistical anomaly detection** - Z-scores, standard deviation
+- **Feature groups** - Organized feature extraction
+
+**Example preview:**
+
+```yaml
+# Distinct count - count unique values
+- count_distinct(
+    field: device.id,
+    where: {geo.ip == event.geo.ip},
+    window: last_5h
+  ) > 10
+
+# Percentile-based outlier detection
+- event.transaction.amount > percentile(
+    transaction.amount,
+    where: {user.id == event.user.id},
+    window: last_30d,
+    p: 95
+  )
+```
+
 ---
 
 ## 10. Array Functions

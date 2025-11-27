@@ -197,6 +197,47 @@ Key features:
 
 ---
 
+## 4.5 Feature Engineering and Statistical Analysis
+
+RDL includes comprehensive feature engineering capabilities for risk control scenarios.
+
+**Core Capabilities:**
+- **Distinct Count** - Unique value counting for association analysis
+  ```yaml
+  count_distinct(device.id, {geo.ip == event.geo.ip}, last_5h) > 10
+  ```
+
+- **Association Analysis** - Entity relationship metrics
+  - IP → Device/User associations
+  - Device → User associations
+  - Identity reuse detection
+
+- **Statistical Functions** - Advanced statistics
+  - Percentiles, median, standard deviation
+  - Z-score and outlier detection
+  - Moving averages and rolling windows
+
+- **Velocity Features** - Rate of change detection
+  ```yaml
+  login_velocity_ratio: (count(logins, last_24h) / count(logins, last_7d)) * 7
+  ```
+
+- **Temporal Features** - Time-based patterns
+  - Time since last event
+  - Off-hours detection
+  - Impossible travel detection
+
+**Common Use Cases:**
+- Login count for an account in the past 7 days
+- Number of device IDs associated with the same IP in the past 5 hours
+- Number of users associated with the same device
+- Whether transaction amount is an outlier (above 95th percentile)
+- Whether user behavior speed has suddenly increased
+
+(See `feature.md` for complete specification and examples.)
+
+---
+
 ## 5. Data Types and Schema
 
 RDL includes a comprehensive type system for data validation and safety.
@@ -333,6 +374,7 @@ RDL documentation is organized as follows:
 
 ### Advanced Features
 - **expression.md** - Expression language reference
+- **feature.md** - Feature engineering and statistical analysis
 - **schema.md** - Type system and data schemas
 - **context.md** - Context and variable management
 - **llm.md** - LLM integration guide

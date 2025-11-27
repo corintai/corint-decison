@@ -42,7 +42,36 @@ Request → Feature Compute → Rules Engine → Pipeline → Decision → Respo
 
 ## 📚 Documentation
 
-System documentation will be available in the `corint/docs` repository.
+### DSL Documentation
+
+The CORINT Risk Definition Language (RDL) documentation is available in `doc/dsl/`:
+
+**Core Components:**
+- [`overall.md`](doc/dsl/overall.md) - High-level overview and architecture
+- [`rule.md`](doc/dsl/rule.md) - Rule specification
+- [`ruleset.md`](doc/dsl/ruleset.md) - Ruleset and decision logic
+- [`pipeline.md`](doc/dsl/pipeline.md) - Pipeline orchestration
+
+**Advanced Features:**
+- [`expression.md`](doc/dsl/expression.md) - Expression language reference
+- [`feature.md`](doc/dsl/feature.md) - **Feature engineering and statistical analysis** ⭐
+- [`context.md`](doc/dsl/context.md) - Context and variable management
+- [`llm.md`](doc/dsl/llm.md) - LLM integration guide
+- [`schema.md`](doc/dsl/schema.md) - Type system and schemas
+
+**Operational:**
+- [`error-handling.md`](doc/dsl/error-handling.md) - Error handling strategies
+- [`observability.md`](doc/dsl/observability.md) - Monitoring and logging
+- [`test.md`](doc/dsl/test.md) - Testing framework
+- [`performance.md`](doc/dsl/performance.md) - Performance optimization
+
+**Examples:**
+- [`examples/`](doc/dsl/examples/) - Real-world pipeline examples
+- [`examples/statistical-analysis.yml`](doc/dsl/examples/statistical-analysis.yml) - Comprehensive statistical analysis example
+
+### Quick Links
+
+- **Feature Engineering**: For statistical analysis like "login count in the past 7 days" or "number of device IDs associated with the same IP in the past 5 hours", see [`feature.md`](doc/dsl/feature.md)
 
 ## 🤝 Contributing
 
