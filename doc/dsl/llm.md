@@ -234,7 +234,7 @@ infer:
 
 ## 3. LLM Providers
 
-### 2.1 Supported Providers
+### 3.1 Supported Providers
 
 | Provider | Models | Features |
 |----------|--------|----------|
@@ -245,7 +245,7 @@ infer:
 | `vertex` | gemini-pro, palm-2 | GCP native |
 | `custom` | custom endpoint | Self-hosted models |
 
-### 2.2 Provider Configuration
+### 3.2 Provider Configuration
 
 ```yaml
 llm_providers:

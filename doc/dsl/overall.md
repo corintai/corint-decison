@@ -56,8 +56,9 @@ rule:
   description: string
   when: <condition-block>
   score: number
-  action: approve | deny | review | infer | <custom>
 ```
+
+**Note:** Rules do not define actions. Actions are defined in Ruleset's `decision_logic`.
 
 ---
 
@@ -348,7 +349,40 @@ Optimizations:
 
 ---
 
-## 12. External API Integration
+## 12. Internal Service Integration
+
+RDL provides comprehensive integration with internal services for data access and computation.
+
+Service types:
+- **Database services** - MySQL, PostgreSQL, MongoDB, Cassandra
+- **Cache services** - Redis, Memcached
+- **Feature Store** - Pre-computed features
+- **Microservices** - Internal RESTful/gRPC services
+- **Message queues** - Kafka, RabbitMQ
+- **Search services** - Elasticsearch
+
+Example:
+```yaml
+pipeline:
+  # Database query
+  - type: service
+    id: load_user
+    service: user_db
+    query: get_user_profile
+    output: context.user_profile
+
+  # Cache lookup
+  - type: service
+    id: check_cache
+    service: redis_cache
+    operation: get_user_risk_cache
+```
+
+(See `service.md` for complete specification.)
+
+---
+
+## 13. External API Integration
 
 ```yaml
 external_api.<provider>.<field>
@@ -360,29 +394,39 @@ Example:
 external_api.Chainalysis.risk_score > 80
 ```
 
+(See `external.md` for complete specification.)
+
 ---
 
-## 13. Documentation Structure
+## 14. Documentation Structure
 
 RDL documentation is organized as follows:
 
-### Core Components
-- **overall.md** (this file) - High-level overview
-- **rule.md** - Rule specification
-- **ruleset.md** - Ruleset specification
-- **pipeline.md** - Pipeline specification
+### Overview & Architecture
+- **overall.md** (this file) - High-level overview and introduction
+- **ARCHITECTURE.md** - Three-layer decision architecture (design philosophy)
 
-### Advanced Features
-- **expression.md** - Expression language reference
-- **feature.md** - Feature engineering and statistical analysis
+### Core Components
+- **expression.md** - Expression language (fundamental syntax)
+- **rule.md** - Rule specification (including dynamic thresholds and dependencies)
+- **ruleset.md** - Ruleset specification
+- **pipeline.md** - Pipeline orchestration
+
+### Data & Schema
+- **event.md** - Standard event types and schemas
 - **schema.md** - Type system and data schemas
 - **context.md** - Context and variable management
+
+### Advanced Features
+- **feature.md** - Feature engineering and statistical analysis
 - **llm.md** - LLM integration guide
+- **service.md** - Internal service integration (databases, caches, microservices)
+- **external.md** - External API integration (third-party services)
 
 ### Operational
 - **error-handling.md** - Error handling strategies
-- **observability.md** - Monitoring and logging
-- **test.md** - Testing framework
+- **observability.md** - Monitoring, logging, and alerting
+- **test.md** - Testing framework (including backtesting)
 - **performance.md** - Performance optimization
 
 ### Examples
@@ -390,7 +434,7 @@ RDL documentation is organized as follows:
 
 ---
 
-## 14. Examples
+## 15. Examples
 
 ### 14.1 Login Risk Example
 
@@ -438,7 +482,7 @@ rule:
 
 ---
 
-## 15. BNF Grammar (Formal)
+## 16. BNF Grammar (Formal)
 
 ```
 RDL ::= "version" ":" STRING
@@ -508,7 +552,7 @@ PIPELINE ::= defined in pipeline.md
 
 ---
 
-## 16. Decision Architecture
+## 17. Decision Architecture
 
 RDL uses a three-layer decision architecture:
 
@@ -533,7 +577,7 @@ RDL uses a three-layer decision architecture:
 Rules → Scores → Ruleset → Action → Pipeline Output
 ```
 
-## 17. Compilation Model
+## 18. Compilation Model
 
 RDL compiles into:
 
@@ -552,7 +596,7 @@ The compilation process includes:
 
 ---
 
-## 17. Roadmap
+## 19. Roadmap
 
 ### Completed ✅
 - ✅ Core DSL syntax (Rule, Ruleset, Pipeline)
@@ -569,24 +613,35 @@ The compilation process includes:
 - 🚧 Visual editor
 - 🚧 IDE plugins
 
+### Completed (v0.1 Enhancements) ✅
+- ✅ External API integration specification
+- ✅ Internal service integration specification
+- ✅ Event catalog and schema definitions
+- ✅ Dynamic thresholds for rules
+- ✅ Rule dependencies and conflict management
+- ✅ Backtesting framework
+- ✅ Feature engineering and statistical analysis
+
 ### Planned 📋
 - 📋 WASM sandbox execution
 - 📋 Code generator (Rust / Python / JS / TypeScript)
 - 📋 Prebuilt rule libraries
 - 📋 Machine learning model integration
 - 📋 Real-time rule updates
-- 📋 A/B testing framework
-- 📋 Compliance templates (PCI-DSS, GDPR, etc.)
 
 ---
 
-## 18. Summary
+## 20. Summary
 
 RDL provides a modern, explainable, AI‑augmented DSL for advanced risk engines:
 
-- Rules + LLM reasoning in one language  
-- Modular (Rule → Ruleset → Pipeline)  
-- High‑performance and auditable  
-- Designed for banks, fintech, e‑commerce, and Web3  
+- Rules + LLM reasoning in one language
+- Modular (Rule → Ruleset → Pipeline)
+- High‑performance and auditable
+- Dynamic thresholds and adaptive rules
+- Comprehensive feature engineering and statistical analysis
+- Complete internal service integration (databases, caches, microservices)
+- Comprehensive external API integration
+- Designed for banks, fintech, e‑commerce, and Web3
 
 This DSL is the foundation of the Cognitive Risk Intelligence Platform (CORINT).

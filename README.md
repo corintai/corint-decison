@@ -46,18 +46,26 @@ Request → Feature Compute → Rules Engine → Pipeline → Decision → Respo
 
 The CORINT Risk Definition Language (RDL) documentation is available in `doc/dsl/`:
 
+**Overview & Architecture:**
+- [`overall.md`](doc/dsl/overall.md) - High-level overview and introduction
+- [`ARCHITECTURE.md`](doc/dsl/ARCHITECTURE.md) - Three-layer decision architecture (design philosophy)
+
 **Core Components:**
-- [`overall.md`](doc/dsl/overall.md) - High-level overview and architecture
+- [`expression.md`](doc/dsl/expression.md) - Expression language (fundamental syntax)
 - [`rule.md`](doc/dsl/rule.md) - Rule specification
 - [`ruleset.md`](doc/dsl/ruleset.md) - Ruleset and decision logic
 - [`pipeline.md`](doc/dsl/pipeline.md) - Pipeline orchestration
 
-**Advanced Features:**
-- [`expression.md`](doc/dsl/expression.md) - Expression language reference
-- [`feature.md`](doc/dsl/feature.md) - **Feature engineering and statistical analysis** ⭐
+**Data & Schema:**
+- [`event.md`](doc/dsl/event.md) - Standard event types and schemas
+- [`schema.md`](doc/dsl/schema.md) - Type system and data schemas
 - [`context.md`](doc/dsl/context.md) - Context and variable management
+
+**Advanced Features:**
+- [`feature.md`](doc/dsl/feature.md) - **Feature engineering and statistical analysis** ⭐
 - [`llm.md`](doc/dsl/llm.md) - LLM integration guide
-- [`schema.md`](doc/dsl/schema.md) - Type system and schemas
+- [`service.md`](doc/dsl/service.md) - **Internal service integration** ⭐
+- [`external.md`](doc/dsl/external.md) - External API integration (third-party services)
 
 **Operational:**
 - [`error-handling.md`](doc/dsl/error-handling.md) - Error handling strategies
@@ -72,6 +80,8 @@ The CORINT Risk Definition Language (RDL) documentation is available in `doc/dsl
 ### Quick Links
 
 - **Feature Engineering**: For statistical analysis like "login count in the past 7 days" or "number of device IDs associated with the same IP in the past 5 hours", see [`feature.md`](doc/dsl/feature.md)
+- **Internal Services**: For database queries, cache access, microservice calls, and message queue integration, see [`service.md`](doc/dsl/service.md)
+- **External APIs**: For third-party API integration (Chainalysis, MaxMind, etc.), see [`external.md`](doc/dsl/external.md)
 
 ## 🤝 Contributing
 

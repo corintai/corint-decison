@@ -45,6 +45,7 @@ step:
 | `extract` | Feature extraction (device info, geo-IP, KYC profile, etc.) |
 | `reason` | LLM cognitive reasoning step |
 | `rules` | Execute a ruleset |
+| `service` | Internal service call (database, cache, microservice, etc.) |
 | `api` | External API lookup (Chainalysis, MaxMind, device fingerprint, etc.) |
 | `score` | Score computation or normalization |
 | `action` | Produces final decision outcome |
@@ -231,6 +232,64 @@ pipeline:
 
 ---
 
+### 7.3 Service Integration Pipeline Example
+
+```yaml
+version: "0.1"
+
+pipeline:
+  # Step 1: Load user profile from database
+  - type: service
+    id: load_user_profile
+    service: user_db
+    query: get_user_profile
+    params:
+      user_id: event.user.id
+    output: context.user_profile
+
+  # Step 2: Check cache for existing risk score
+  - type: service
+    id: check_risk_cache
+    service: redis_cache
+    operation: get_user_risk_cache
+    output: context.cached_risk
+
+  # Step 3: Parallel external intelligence checks
+  - parallel:
+      # Load pre-computed features
+      - type: service
+        id: load_features
+        service: feature_store
+        features: [user_behavior_7d, device_profile]
+
+      # Check external API
+      - type: api
+        id: ip_reputation
+        api: maxmind
+        endpoint: ip_lookup
+
+      # LLM reasoning
+      - type: reason
+        id: behavior_analysis
+        provider: openai
+
+    merge:
+      method: all
+
+  # Step 4: Execute rules with all context
+  - include:
+      ruleset: comprehensive_risk_check
+
+  # Step 5: Publish decision to message queue
+  - type: service
+    id: publish_decision
+    service: event_bus
+    topic: risk_decisions
+    async: true
+```
+
+---
+
 ## 8. BNF Grammar (Formal)
 
 ```
@@ -253,7 +312,7 @@ OBJECT_STEP ::=
       [ "if:" CONDITION ]
       [ "params:" OBJECT ]
 
-STEP_TYPE ::= "extract" | "reason" | "rules" | "api" 
+STEP_TYPE ::= "extract" | "reason" | "rules" | "service" | "api"
             | "score" | "action" | "custom"
 
 BRANCH_STEP ::= 

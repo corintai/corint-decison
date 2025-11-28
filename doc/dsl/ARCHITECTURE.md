@@ -371,3 +371,43 @@ pipeline:
 - `pipeline.md` - Pipeline orchestration specification
 - `examples/account-takeover-complete.yml` - Complete example
 
+---
+
+## Complete Documentation Structure
+
+CORINT RDL documentation is organized into five categories for clarity and ease of navigation.
+
+```
+📚 CORINT RDL Documentation
+
+├─ 📖 Overview & Architecture
+│  ├─ overall.md          High-level overview of RDL, goals, components, and features
+│  └─ ARCHITECTURE.md     Three-layer decision architecture design philosophy
+│
+├─ 🔧 Core Components (Fundamental building blocks)
+│  ├─ expression.md       Expression language syntax, operators, and functions (foundational)
+│  ├─ rule.md            Rule specification for detecting risk factors and scoring
+│  ├─ ruleset.md         Ruleset specification for grouping rules and decision logic
+│  └─ pipeline.md        Pipeline orchestration for complete risk processing workflows
+│
+├─ 📊 Data & Schema (Data structures and type system)
+│  ├─ event.md           Standard event types, schemas, and data structures
+│  ├─ schema.md          Type system, validation, schema definitions, and validators
+│  └─ context.md         Context and variable management for data flow between steps
+│
+├─ 🚀 Advanced Features (Sophisticated capabilities)
+│  ├─ feature.md         Feature engineering, statistical analysis, and aggregations
+│  ├─ llm.md             Large Language Model integration for cognitive reasoning
+│  ├─ service.md         Internal service integration (DB, cache, microservices, MQ)
+│  └─ external.md        External API integration for third-party risk intelligence
+│
+├─ ⚙️ Operational (Production deployment and monitoring)
+│  ├─ error-handling.md  Error handling strategies, fallbacks, retries, and circuit breakers
+│  ├─ observability.md   Monitoring, logging, metrics, tracing, and alerting
+│  ├─ test.md           Testing framework for rules, rulesets, pipelines, and backtesting
+│  └─ performance.md    Performance optimization, caching, parallelization, and tuning
+│
+└─ 📝 Examples
+   └─ examples/          Real-world pipeline examples and best practice patterns
+```
+
